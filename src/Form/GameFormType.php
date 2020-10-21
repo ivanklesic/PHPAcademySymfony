@@ -1,0 +1,67 @@
+<?php
+
+namespace App\Form;
+
+use App\Entity\Game;
+use App\Entity\Genre;
+use App\Repository\GenreRepository;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
+use Symfony\Component\Form\Extension\Core\Type\NumberType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+
+class GameFormType extends AbstractType
+{
+    public function buildForm(FormBuilderInterface $builder, array $options)
+    {
+        $builder
+            ->add('name', TextType::class, array(
+                'required' => true
+            ))
+            ->add('releaseDate', DateType::class, array(
+                'required' => true,
+                'widget' => 'single_text',
+                'html5' => false,
+                'attr' => ['class' => 'js-datepicker']
+            ))
+            ->add('cpuFreq', NumberType::class, array(
+                'required' => true
+            ))
+            ->add('cpuCores', IntegerType::class, array(
+                'required' => true
+            ))
+            ->add('gpuVram', IntegerType::class, array(
+                'required' => true
+            ))
+            ->add('ram', IntegerType::class, array(
+                'required' => true
+            ))
+            ->add('storageSpace', IntegerType::class, array(
+                'required' => true
+            ))
+            ->add('genres', EntityType::class, array(
+                'required' => true,
+                'multiple' => true,
+                'expanded' => true,
+                'class' => Genre::class,
+                'choice_label' => function($genre){
+                    return $genre->getName();
+                },
+                'query_builder' => function(GenreRepository $genreRepository){
+                    $genreRepository->getActive();
+                }
+            ))
+        ;
+    }
+
+    public function configureOptions(OptionsResolver $resolver)
+    {
+        $resolver->setDefaults([
+            'data_class' => Game::class,
+        ]);
+    }
+}

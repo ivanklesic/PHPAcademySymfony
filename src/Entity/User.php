@@ -3,12 +3,16 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=UserRepository::class)
+ * @UniqueEntity("email")
  */
 class User implements UserInterface
 {
@@ -24,6 +28,7 @@ class User implements UserInterface
      * @Assert\Email(
      *     message = "The email '{{ value }}' is not a valid email."
      * )
+     * @Assert\NotBlank
      */
     private $email;
 
@@ -40,40 +45,66 @@ class User implements UserInterface
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank()
      */
     private $firstName;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank()
      */
     private $lastName;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
+     * @Assert\PositiveOrZero()
      */
     private $cpuCores;
 
     /**
      * @ORM\Column(type="float", nullable=true)
+     * @Assert\PositiveOrZero()
      */
     private $cpuFreq;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
+     * @Assert\PositiveOrZero()
      */
     private $gpuVram;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
+     * @Assert\PositiveOrZero()
      */
     private $ram;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
+     * @Assert\PositiveOrZero()
      */
     private $storageSpace;
 
+    /**
+     * @ORM\ManyToMany(targetEntity=Genre::class, inversedBy="users")
+     */
+    private $favoriteGenres;
 
+    /**
+     * @ORM\OneToMany(targetEntity=Review::class, mappedBy="user", orphanRemoval=true)
+     */
+    private $reviews;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $imageUrl;
+
+    public function __construct()
+    {
+        $this->favoriteGenres = new ArrayCollection();
+        $this->reviews = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -233,6 +264,75 @@ class User implements UserInterface
     public function setStorageSpace(?int $storageSpace): self
     {
         $this->storageSpace = $storageSpace;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Genre[]
+     */
+    public function getFavoriteGenres(): Collection
+    {
+        return $this->favoriteGenres;
+    }
+
+    public function addFavoriteGenre(Genre $favoriteGenre): self
+    {
+        if (!$this->favoriteGenres->contains($favoriteGenre)) {
+            $this->favoriteGenres[] = $favoriteGenre;
+        }
+
+        return $this;
+    }
+
+    public function removeFavoriteGenre(Genre $favoriteGenre): self
+    {
+        if ($this->favoriteGenres->contains($favoriteGenre)) {
+            $this->favoriteGenres->removeElement($favoriteGenre);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Review[]
+     */
+    public function getReviews(): Collection
+    {
+        return $this->reviews;
+    }
+
+    public function addReview(Review $review): self
+    {
+        if (!$this->reviews->contains($review)) {
+            $this->reviews[] = $review;
+            $review->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeReview(Review $review): self
+    {
+        if ($this->reviews->contains($review)) {
+            $this->reviews->removeElement($review);
+            // set the owning side to null (unless already changed)
+            if ($review->getUser() === $this) {
+                $review->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getImageUrl(): ?string
+    {
+        return $this->imageUrl;
+    }
+
+    public function setImageUrl(?string $imageUrl): self
+    {
+        $this->imageUrl = $imageUrl;
 
         return $this;
     }

@@ -2,48 +2,105 @@
 
 namespace App\Form;
 
+use App\Entity\Genre;
 use App\Entity\User;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\EmailType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
+use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Validator\Constraints\IsTrue;
+use Symfony\Component\Validator\Constraints\File as File;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
+use App\Repository\GenreRepository;
 
 class RegistrationFormType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $requiredPassword = $options['requiredPassword'];
-        /** @var User $user */
-        $user = $options['user'];
+        $edit = $options['edit'];
 
         $builder
-            ->add('email')
-            ->add('firstName')
-            ->add('lastName')
-            ->add('plainPassword', RepeatedType::class, array(
-                'required' => $requiredPassword,
-                'empty_data' => '',
+            ->add('email', EmailType::class, array(
+                'required' => true
+            ))
+            ->add('firstName', TextType::class, array(
+                'required' => true
+            ))
+            ->add('lastName', TextType::class, array(
+                'required' => true
+            ));
+            if(!$edit)
+            {
+                $builder->add('plainPassword', RepeatedType::class, array(
+                    'required' => true,
+                    'empty_data' => '',
+                    'mapped' => false,
+                    'type' => PasswordType::class,
+                    'first_options'  => array('label' => 'Password'),
+                    'second_options' => array('label' => 'Repeat Password'),
+                    'constraints' => [
+                        new NotBlank([
+                            'message' => 'Please enter a password',
+                        ]),
+                        new Length([
+                            'min' => 6,
+                            'minMessage' => 'Your password should be at least {{ limit }} characters long',
+                            // max length allowed by Symfony for security reasons
+                            'max' => 4096,
+                            'maxMessage' => 'Your password should be at most {{ limit }} characters long',
+                        ]),
+                    ],
+                ));
+            }
+        $builder
+            ->add('image', FileType::class, [
+                'label' => 'Image (jpg/jpeg file, leaving this empty will not interfere with existing image)',
                 'mapped' => false,
-                'type' => PasswordType::class,
-                'first_options'  => array('label' => 'Password'),
-                'second_options' => array('label' => 'Repeat Password'),
+                'required' => false,
                 'constraints' => [
-                    new NotBlank([
-                        'message' => 'Please enter a password',
-                    ]),
-                    new Length([
-                        'min' => 6,
-                        'minMessage' => 'Your password should be at least {{ limit }} characters long',
-                        // max length allowed by Symfony for security reasons
-                        'max' => 4096,
-                        'maxMessage' => 'Your password should be at most {{ limit }} characters long',
-                    ]),
+                    new File([
+                        'maxSize' => '100K',
+                        'mimeTypes' => [
+                            'image/jpeg',
+                        ],
+                        'mimeTypesMessage' => 'Please upload a valid .jpeg image',
+                        'maxSizeMessage' => 'Maximum allowed size of the image is {{ limit }} KB'
+                    ])
                 ],
+            ])
+            ->add('favoriteGenres', EntityType::class, array(
+                'required' => false,
+                'multiple' => true,
+                'expanded' => true,
+                'class' => Genre::class,
+                'choice_label' => function($genre){
+                    return $genre->getName();
+                },
+                'query_builder' => function(GenreRepository $genreRepository){
+                    $genreRepository->getActive();
+                }
+            ))
+            ->add('cpuFreq', NumberType::class, array(
+                'required' => false
+            ))
+            ->add('cpuCores', IntegerType::class, array(
+                'required' => false
+            ))
+            ->add('gpuVram', IntegerType::class, array(
+                'required' => false
+            ))
+            ->add('ram', IntegerType::class, array(
+                'required' => false
+            ))
+            ->add('storageSpace', IntegerType::class, array(
+                'required' => false
             ))
         ;
     }
@@ -56,6 +113,6 @@ class RegistrationFormType extends AbstractType
         ]);
         $resolver->setRequired('user');
         $resolver->setAllowedTypes('user', array(User::class, 'int'));
-        $resolver->setRequired('requiredPassword');
+        $resolver->setRequired('edit');
     }
 }

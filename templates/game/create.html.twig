@@ -1,0 +1,37 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{% if not edit %}Create new game {% else %} Edit game {% endif %}{% endblock %}
+
+{% block body %}
+
+    <div class="row justify-content-center">
+        <h3 class="h3 mb-3 font-weight-normal">{% if not edit %}Create new game {% else %} Edit game {% endif %}</h3>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-6">
+            {{ form_start(registrationForm) }}
+            {{ form_row(registrationForm.name) }}
+            {{ form_row(registrationForm.releaseDate) }}
+            {{ form_row(registrationForm.cpuFreq) }}
+            {{ form_row(registrationForm.cpuCores) }}
+            {{ form_row(registrationForm.gpuVram) }}
+            {{ form_row(registrationForm.ram) }}
+            {{ form_row(registrationForm.storageSpace) }}
+            {{ form_row(registrationForm.genres) }}
+            <button type="submit" class="btn btn-block btn-primary">Submit</button>
+        </div>
+    </div>
+    {{ form_end(registrationForm) }}
+{% endblock %}
+
+{% block javascripts %}
+    <script>
+        $(document).ready(function() {
+            // you may need to change this code if you are not using Bootstrap Datepicker
+            $('.js-datepicker').datepicker({
+                format: 'yyyy-mm-dd'
+            });
+        });
+    </script>
+{% endblock %}

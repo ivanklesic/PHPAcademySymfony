@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Register{% endblock %}
+{% block title %}{% if not edit %}Register{% else %}Edit profile{% endif %}{% endblock %}
 
 {% block body %}
     {% for flashError in app.flashes('verify_email_error') %}
@@ -8,19 +8,30 @@
     {% endfor %}
 
     <div class="row justify-content-center">
-        <h3 class="h3 mb-3 font-weight-normal">Register</h3>
+        <h3 class="h3 mb-3 font-weight-normal">{% if not edit %}Register{% else %}Edit profile{% endif %}</h3>
     </div>
 
     <div class="row justify-content-center">
         <div class="col-6">
+            <h5 class="h5 mb-3 font-weight-normal">Required</h5>
         {{ form_start(registrationForm) }}
         {{ form_row(registrationForm.email) }}
         {{ form_row(registrationForm.firstName) }}
         {{ form_row(registrationForm.lastName) }}
+            {% if not edit %}
         {{ form_row(registrationForm.plainPassword, {
             label: 'Password'
         }) }}
-        <button type="submit" class="btn btn-block btn-primary">Register</button>
+            {% endif %}
+            <h5 class="h5 mb-3 font-weight-normal">Optional</h5>
+            {{ form_row(registrationForm.image) }}
+            {{ form_row(registrationForm.favoriteGenres) }}
+            {{ form_row(registrationForm.cpuFreq) }}
+            {{ form_row(registrationForm.cpuCores) }}
+            {{ form_row(registrationForm.gpuVram) }}
+            {{ form_row(registrationForm.ram) }}
+            {{ form_row(registrationForm.storageSpace) }}
+        <button type="submit" class="btn btn-block btn-primary">Submit</button>
     </div>
     </div>
     {{ form_end(registrationForm) }}
