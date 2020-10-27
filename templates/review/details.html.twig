@@ -1,0 +1,28 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Review{% endblock %}
+
+{% block body %}
+    <div class="bg-white rounded shadow-sm p-4 mb-4 restaurant-detailed-ratings-and-reviews">
+        <h5 class="mb-1">{{ review.title }} --- a review for {{ review.game.name }}</h5>
+        <div class="reviews-members pt-4 pb-4">
+            <div class="media">
+                <img alt="Generic placeholder image" src="{{ asset('images/user/' ~ review.user.imageUrl) }}" class="mr-3 rounded-pill">
+                <div class="media-body">
+                    <div class="reviews-members-header">
+                                    <span class="star-rating float-right">
+                                        {% for i in 1..10 %}
+                                            <span class="fa fa-star {% if review.rating >= i %}checked{% endif %}"></span>
+                                        {% endfor %}
+                                    </span>
+                        <h6 class="mb-1">By {{ review.user.firstName ~ ' ' ~ review.user.lastName }}</h6>
+                    </div>
+                    <br>
+                    <div class="reviews-members-body">
+                        <p>{{ review.reviewText }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

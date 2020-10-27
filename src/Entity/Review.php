@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\ReviewRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=ReviewRepository::class)
@@ -19,16 +20,23 @@ class Review
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank()
      */
     private $title;
 
     /**
      * @ORM\Column(type="text")
+     * @Assert\NotBlank
      */
     private $reviewText;
 
     /**
      * @ORM\Column(type="integer")
+     * @Assert\Range(
+     *      min = 1,
+     *      max = 10,
+     *      notInRangeMessage = "Rating must be between {{ min }} and {{ max }}",
+     * )
      */
     private $rating;
 
@@ -54,7 +62,7 @@ class Review
         return $this->title;
     }
 
-    public function setTitle(string $title): self
+    public function setTitle(?string $title): self
     {
         $this->title = $title;
 
@@ -66,7 +74,7 @@ class Review
         return $this->reviewText;
     }
 
-    public function setReviewText(string $reviewText): self
+    public function setReviewText(?string $reviewText): self
     {
         $this->reviewText = $reviewText;
 

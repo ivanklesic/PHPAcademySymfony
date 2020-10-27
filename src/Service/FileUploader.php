@@ -25,7 +25,6 @@ class FileUploader
         $fileName = $safeFilename.'-'.uniqid().'.'.$file->guessExtension();
 
         try {
-            //dd($this->getTargetDirectory());
             $file->move($this->getTargetDirectory() . $subFolder, $fileName);
         } catch (FileException $e) {
 

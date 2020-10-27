@@ -47,4 +47,35 @@ class GameRepository extends ServiceEntityRepository
         ;
     }
     */
+
+    public function getActiveQueryBuilder()
+    {
+        return $this->createQueryBuilder('g')
+            ->where('g.deleted = :deleted')
+            ->setParameter('deleted', 0)
+            ;
+    }
+
+    public function getActive()
+    {
+        $builder = $this->getActiveQueryBuilder();
+        return $builder->getQuery()->getResult();
+    }
+
+    public function getGamesOfGenreQueryBuilder($genre)
+    {
+        $builder = $this->getActiveQueryBuilder();
+        $builder
+            ->andWhere(':genre MEMBER OF g.genres')
+            ->setParameter('genre', $genre);
+        return $builder;
+    }
+
+    public function getGamesOfGenre($genre)
+    {
+        $builder = $this->getGamesOfGenreQueryBuilder($genre);
+        return $builder->getQuery()->getResult();
+    }
+
+
 }

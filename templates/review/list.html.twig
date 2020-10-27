@@ -1,0 +1,59 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Review list{% endblock %}
+
+{% block body %}
+<div class="d-flex justify-content-between">
+    <h1>
+        {% if my %}My {% else %}All {% endif %}reviews
+    </h1>
+</div>
+
+<table class="table" id="review-table" style="empty-cells: hide">
+    <thead>
+    <tr>
+        <th>Id</th>
+        <th>Title</th>
+        <th>Rating</th>
+        <th>Author</th>
+        <th>Game</th>
+        <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for review in reviews %}
+    <tr valign="middle">
+        <td>
+            {{ review.id }}
+        </td>
+        <td>
+            <a href="{{ path('review_details', {id: review.id}) }}">{{ review.title }}</a>
+        </td>
+        <td>
+            {{ review.rating }}
+        </td>
+        <td>
+            {{ review.user.firstName ~ " " ~ review.user.lastName }}
+        </td>
+        <td>
+            {{ review.game.name }}
+        </td>
+        <td>
+            {% if is_granted('edit', review) %}
+                <a href="{{ path('review_edit', {id: review.id}) }}">Edit</a> |
+            {% endif %}
+            <a href="{{ path('review_delete', {id: review.id}) }}">Delete</a>
+        </td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
+{% block javascripts %}
+<script>
+    $(document).ready(function () {
+        $('#review-table').DataTable( {
+        });
+    });
+</script>
+{% endblock %}

@@ -48,8 +48,17 @@ class GenreRepository extends ServiceEntityRepository
     }
     */
 
+    public function getActiveQueryBuilder()
+    {
+        return $this->createQueryBuilder('g')
+            ->where('g.deleted = :deleted')
+            ->setParameter('deleted', 0)
+            ;
+    }
+
     public function getActive()
     {
-        return $this->findBy(['deleted' => false]);
+        $builder = $this->getActiveQueryBuilder();
+        return $builder->getQuery()->getResult();
     }
 }

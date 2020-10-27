@@ -8,6 +8,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=GameRepository::class)
@@ -24,11 +25,13 @@ class Game
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank()
      */
     private $name;
 
     /**
      * @ORM\Column(type="date")
+     * @Assert\Type("\DateTimeInterface")
      */
     private $releaseDate;
 
@@ -39,26 +42,31 @@ class Game
 
     /**
      * @ORM\Column(type="float")
+     * @Assert\PositiveOrZero
      */
     private $cpuFreq;
 
     /**
      * @ORM\Column(type="integer")
+     * @Assert\PositiveOrZero
      */
     private $cpuCores;
 
     /**
      * @ORM\Column(type="integer")
+     * @Assert\PositiveOrZero
      */
     private $gpuVram;
 
     /**
      * @ORM\Column(type="integer")
+     * @Assert\PositiveOrZero
      */
     private $ram;
 
     /**
      * @ORM\Column(type="integer")
+     * @Assert\PositiveOrZero
      */
     private $storageSpace;
 
@@ -66,6 +74,11 @@ class Game
      * @ORM\OneToMany(targetEntity=Review::class, mappedBy="game", orphanRemoval=true)
      */
     private $reviews;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $imageUrl;
 
     use SoftDelete;
 
@@ -85,7 +98,7 @@ class Game
         return $this->name;
     }
 
-    public function setName(string $name): self
+    public function setName(?string $name): self
     {
         $this->name = $name;
 
@@ -230,5 +243,34 @@ class Game
     {
         $this->deleted = $deleted;
         return $this;
+    }
+
+    public function getImageUrl(): ?string
+    {
+        return $this->imageUrl;
+    }
+
+    public function setImageUrl(?string $imageUrl): self
+    {
+        $this->imageUrl = $imageUrl;
+
+        return $this;
+    }
+
+    public function getAverageRating() : ?float
+    {
+        $reviews = $this->getReviews();
+
+        if($reviews->isEmpty())
+        {
+            return null;
+        }
+        $sum = 0;
+        foreach($reviews as $review)
+        {
+            $sum += $review->getRating();
+        }
+
+        return $sum/count($reviews);
     }
 }

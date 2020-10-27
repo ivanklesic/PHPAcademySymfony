@@ -3,7 +3,9 @@
 namespace App\Controller;
 
 use App\Entity\Game;
+use App\Entity\User;
 use App\Form\GameFormType;
+use App\Service\FileUploader;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -19,9 +21,10 @@ class GameController extends AbstractController
     /**
      * @Route("/create", name="create")
      * @param Request $request
+     * @param FileUploader $fileUploader
      * @return Response
      */
-    public function createAction(Request $request): Response
+    public function createAction(Request $request, FileUploader $fileUploader): Response
     {
         if(!$this->isGranted('ROLE_ADMIN'))
         {
@@ -33,6 +36,12 @@ class GameController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+
+            $imageFile = $form['image']->getData();
+            if ($imageFile) {
+                $imageFileName = $fileUploader->upload($imageFile, 'game');
+                $game->setImageUrl($imageFileName);
+            }
 
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($game);
@@ -51,9 +60,10 @@ class GameController extends AbstractController
      * @Route("/edit/{id}", name="edit")
      * @param Request $request
      * @param Game $game
+     * @param FileUploader $fileUploader
      * @return Response
      */
-    public function editAction(Request $request, Game $game): Response
+    public function editAction(Request $request, Game $game, FileUploader $fileUploader): Response
     {
         if(!$this->isGranted('ROLE_ADMIN'))
         {
@@ -64,6 +74,16 @@ class GameController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+
+            $imageFile = $form['image']->getData();
+            if ($imageFile) {
+                if($game->getImageUrl())
+                {
+                    unlink('images/game/' . $game->getImageUrl());
+                }
+                $imageFileName = $fileUploader->upload($imageFile, 'game');
+                $game->setImageUrl($imageFileName);
+            }
 
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($game);
@@ -114,4 +134,34 @@ class GameController extends AbstractController
             'games' => $games,
         ]);
     }
+
+    /**
+     * @Route("/compare/{id}", name="compare")
+     * @param Game $game
+     * @return Response
+     */
+    public function compareAction(Game $game): Response
+    {
+        if(!$this->isGranted('ROLE_USER'))
+        {
+            return $this->redirectToRoute('home');
+        }
+
+        /** @var User $user */
+        $user = $this->getUser();
+        $compareError = null;
+
+        if(!$user || $user->getCpuFreq() === null || $user->getCpuCores() === null || $user->getGpuVram() === null || $user->getRam() === null || $user->getStorageSpace() === null)
+        {
+            $compareError = 'Your PC specs are not complete';
+        }
+
+        return $this->render('game/compare.html.twig', [
+            'game' => $game,
+            'user' => $user,
+            'error' => $compareError
+        ]);
+
+    }
+
 }

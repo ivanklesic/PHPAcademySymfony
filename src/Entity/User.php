@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use App\Traits\SoftDelete;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -28,7 +29,7 @@ class User implements UserInterface
      * @Assert\Email(
      *     message = "The email '{{ value }}' is not a valid email."
      * )
-     * @Assert\NotBlank
+     * @Assert\NotBlank()
      */
     private $email;
 
@@ -100,6 +101,8 @@ class User implements UserInterface
      */
     private $imageUrl;
 
+    use SoftDelete;
+
     public function __construct()
     {
         $this->favoriteGenres = new ArrayCollection();
@@ -119,7 +122,6 @@ class User implements UserInterface
     public function setEmail(string $email): self
     {
         $this->email = $email;
-
         return $this;
     }
 
@@ -337,5 +339,15 @@ class User implements UserInterface
         return $this;
     }
 
+    public function getDeleted() : ?bool
+    {
+        return $this->deleted;
+    }
+
+    public function setDeleted($deleted) : self
+    {
+        $this->deleted = $deleted;
+        return $this;
+    }
 
 }

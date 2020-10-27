@@ -8,11 +8,13 @@ use App\Repository\GenreRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\File as File;
 
 class GameFormType extends AbstractType
 {
@@ -55,6 +57,21 @@ class GameFormType extends AbstractType
                     $genreRepository->getActive();
                 }
             ))
+            ->add('image', FileType::class, [
+                'label' => 'Image (jpg/jpeg file, leaving this empty will not interfere with existing image)',
+                'mapped' => false,
+                'required' => false,
+                'constraints' => [
+                    new File([
+                        'maxSize' => '100K',
+                        'mimeTypes' => [
+                            'image/jpeg',
+                        ],
+                        'mimeTypesMessage' => 'Please upload a valid .jpeg image',
+                        'maxSizeMessage' => 'Maximum allowed size of the image is {{ limit }} KB'
+                    ])
+                ],
+            ])
         ;
     }
 

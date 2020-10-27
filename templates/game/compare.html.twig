@@ -1,0 +1,99 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Spec compare{% endblock %}
+
+{% block body %}
+    <div class="d-flex justify-content-between">
+        <h1>
+            Spec compare - {{ game.name }}
+        </h1>
+    </div>
+
+    <table class="table" id="spec-table" style="empty-cells: hide">
+        <thead>
+        <tr>
+            <th></th>
+            <th>CPU frequency</th>
+            <th>Number of CPU cores</th>
+            <th>Video RAM</th>
+            <th>RAM</th>
+            <th>Storage space</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr valign="middle">
+            {% if error %}
+                <td style="color: red">
+                {{ error }}
+                </td>
+            {% else %}
+            <td>
+                Your specs:
+            </td>
+            <td>
+                {{ user.cpuFreq }} GHz
+            </td>
+            <td>
+                {{ user.cpuCores }}
+            </td>
+            <td>
+                {{ user.gpuVram }} GB
+            </td>
+            <td>
+                {{ user.ram }} GB
+            </td>
+            <td>
+                {{ user.storageSpace }} GB
+            </td>
+            {% endif %}
+        </tr>
+        <tr valign="middle">
+            <td>
+                Minimum requirements:
+            </td>
+            <td>
+                {{ game.cpuFreq }} GHz
+            </td>
+            <td>
+                {{ game.cpuCores }}
+            </td>
+            <td>
+                {{ game.gpuVram }} GB
+            </td>
+            <td>
+                {{ game.ram }} GB
+            </td>
+            <td>
+                {{ game.storageSpace }} GB
+            </td>
+        </tr>
+        {% if not error %}
+        <tr valign="middle">
+            <td>
+                Results:
+            </td>
+            <td>
+                {% if game.cpuFreq <= user.cpuFreq %} <i class="fa fa-check"></i> {% else %}<i class="fa fa-times"></i> {% endif %}
+            </td>
+            <td>
+                {% if game.cpuCores <= user.cpuCores %} <i class="fa fa-check"></i> {% else %}<i class="fa fa-times"></i> {% endif %}
+            </td>
+            <td>
+                {% if game.gpuVram <= user.gpuVram %} <i class="fa fa-check"></i> {% else %}<i class="fa fa-times"></i> {% endif %}
+            </td>
+            <td>
+                {% if game.ram <= user.ram %} <i class="fa fa-check"></i> {% else %}<i class="fa fa-times"></i> {% endif %}
+            </td>
+            <td>
+                {% if game.storageSpace <= user.storageSpace %} <i class="fa fa-check"></i> {% else %}<i class="fa fa-times"></i> {% endif %}
+            </td>
+        </tr>
+        {% endif %}
+
+        </tbody>
+    </table>
+{% endblock %}
+{% block javascripts %}
+    <script>
+    </script>
+{% endblock %}

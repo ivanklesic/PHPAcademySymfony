@@ -19,6 +19,7 @@ use Symfony\Component\Validator\Constraints\File as File;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use App\Repository\GenreRepository;
+use Symfony\Component\Validator\Constraints\Regex;
 
 class RegistrationFormType extends AbstractType
 {
@@ -52,10 +53,13 @@ class RegistrationFormType extends AbstractType
                         new Length([
                             'min' => 6,
                             'minMessage' => 'Your password should be at least {{ limit }} characters long',
-                            // max length allowed by Symfony for security reasons
-                            'max' => 4096,
+                            'max' => 64,
                             'maxMessage' => 'Your password should be at most {{ limit }} characters long',
                         ]),
+                        new Regex([
+                            'pattern' => "/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/",
+                            'message' => "Password must contain at least one letter and one number (no spaces or other characters)"
+                        ])
                     ],
                 ));
             }

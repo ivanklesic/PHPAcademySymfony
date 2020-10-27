@@ -1,20 +1,45 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello HomeController!{% endblock %}
+{% block title %}Php Academy{% endblock %}
 
 {% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-2">
+                <br>
+                <div class="list-group">
+                    {% for genre in genres %}
+                    <a href="{{path('home_genre', {id: genre.id})}}" class="list-group-item">{{ genre.name }}</a>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="col-lg-10">
+                <br>
+                <div class="row">
+                    {% for game in games %}
+                        {% set avgRating = game.getAverageRating() %}
+                    <div class="col-lg-4 col-md-6 mb-4">
+                        <div class="card mb-3">
+                            <h3 class="card-header">{{ game.name }}</h3>
+                            <img style="height: 200px; width: 100%; display: block;" src="{{ asset('images/game/' ~ game.imageUrl) }}" alt="Card image">
+                            <div class="card-body">
+                                <p class="card-text">Average rating: {% if avgRating %} {{ avgRating }} {% else %} N/A {% endif %}</p>
+                                <p class="card-text">Total ratings: {{ game.reviews|length }}</p>
+                            </div>
+                            <div class="card-body">
+                                <a href="{{path('review_create', {id: game.id})}}" class="card-link">Review this game</a><br>
+                                <a href="{{path('review_game', {id: game.id})}}" class="card-link">List all reviews</a><br>
+                                <a href="{{path('game_compare', {id: game.id})}}" class="card-link">Compare specs</a><br>
+                            </div>
+                            <div class="card-footer text-muted">
+                                {{ game.releaseDate|date('m/d/Y') }}
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
 
-<div class="example-wrapper">
-    <h1>Hello {{ controller_name }}! ✅</h1>
-
-    This friendly message is coming from:
-    <ul>
-        <li>Your controller at <code><a href="{{ '/var/www/html/PHPAcademySymfony/src/Controller/HomeController.php'|file_link(0) }}">src/Controller/HomeController.php</a></code></li>
-        <li>Your template at <code><a href="{{ '/var/www/html/PHPAcademySymfony/templates/home/index.html.twig'|file_link(0) }}">templates/home/index.html.twig</a></code></li>
-    </ul>
-</div>
 {% endblock %}
