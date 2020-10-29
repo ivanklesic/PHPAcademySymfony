@@ -10,6 +10,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use App\Service\BestGameDeals;
 
 /**
  * Class GameController
@@ -160,6 +161,27 @@ class GameController extends AbstractController
             'game' => $game,
             'user' => $user,
             'error' => $compareError
+        ]);
+    }
+
+    /**
+     * @Route("/deals/{id}", name="deals")
+     * @param Game $game
+     * @param BestGameDeals $gameDeals
+     * @return Response
+     */
+    public function getDeals(Game $game, BestGameDeals $gameDeals) : Response
+    {
+        if(!$this->isGranted('ROLE_USER'))
+        {
+            return $this->redirectToRoute('home');
+        }
+
+        $deals = $gameDeals->fetchGameDeals($game->getName());
+
+        return $this->render('game/deals.html.twig', [
+            'game' => $game,
+            'deals' => $deals
         ]);
 
     }

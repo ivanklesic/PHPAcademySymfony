@@ -30,6 +30,7 @@
                                 <a href="{{path('review_create', {id: game.id})}}" class="card-link">Review this game</a><br>
                                 <a href="{{path('review_game', {id: game.id})}}" class="card-link">List all reviews</a><br>
                                 <a href="{{path('game_compare', {id: game.id})}}" class="card-link">Compare specs</a><br>
+                                <a href="{{path('game_deals', {id: game.id})}}" class="card-link">Show best deals</a><br>
                             </div>
                             <div class="card-footer text-muted">
                                 {{ game.releaseDate|date('m/d/Y') }}
