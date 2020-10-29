@@ -5,23 +5,23 @@ namespace App\Service;
 
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
-use \Transliterator;
+use Symfony\Component\String\Slugger\SluggerInterface;
 
 class FileUploader
 {
     private $targetDirectory;
-    private $transliterator;
+    private $slugger;
 
-    public function __construct($targetDirectory)
+    public function __construct($targetDirectory, SluggerInterface $slugger)
     {
         $this->targetDirectory = $targetDirectory;
-        $this->transliterator = Transliterator::create('Any-Latin; Latin-ASCII; [^A-Za-z0-9_] remove; Lower()');
+        $this->slugger = $slugger;
     }
 
     public function upload(UploadedFile $file, $subFolder)
     {
         $originalFilename = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
-        $safeFilename = $this->transliterator->transliterate($originalFilename);
+        $safeFilename = $this->slugger->slug($originalFilename);
         $fileName = $safeFilename.'-'.uniqid().'.'.$file->guessExtension();
 
         try {

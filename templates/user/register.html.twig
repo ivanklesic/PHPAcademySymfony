@@ -36,3 +36,10 @@
     </div>
     {{ form_end(registrationForm) }}
 {% endblock %}
+{% block javascripts %}
+    <script>
+        $(document).ready(function() {
+            bsCustomFileInput.init()
+        });
+    </script>
+{% endblock %}
