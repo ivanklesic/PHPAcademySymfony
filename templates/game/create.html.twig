@@ -10,20 +10,20 @@
 
     <div class="row justify-content-center">
         <div class="col-6">
-            {{ form_start(registrationForm) }}
-            {{ form_row(registrationForm.name) }}
-            {{ form_row(registrationForm.releaseDate) }}
-            {{ form_row(registrationForm.cpuFreq) }}
-            {{ form_row(registrationForm.cpuCores) }}
-            {{ form_row(registrationForm.gpuVram) }}
-            {{ form_row(registrationForm.ram) }}
-            {{ form_row(registrationForm.storageSpace) }}
-            {{ form_row(registrationForm.genres) }}
-            {{ form_row(registrationForm.image) }}
+            {{ form_start(form) }}
+            {{ form_row(form.name) }}
+            {{ form_row(form.releaseDate) }}
+            {{ form_row(form.cpuFreq) }}
+            {{ form_row(form.cpuCores) }}
+            {{ form_row(form.gpuVram) }}
+            {{ form_row(form.ram) }}
+            {{ form_row(form.storageSpace) }}
+            {{ form_row(form.genres) }}
+            {{ form_row(form.image) }}
             <button type="submit" class="btn btn-block btn-primary">Submit</button>
         </div>
     </div>
-    {{ form_end(registrationForm) }}
+    {{ form_end(form) }}
 {% endblock %}
 
 {% block javascripts %}

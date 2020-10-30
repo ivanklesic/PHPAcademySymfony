@@ -43,7 +43,7 @@ class GenreController extends AbstractController
 
         return $this->render('genre/create.html.twig', [
             'edit' => false,
-            'registrationForm' => $form->createView(),
+            'form' => $form->createView(),
         ]);
     }
 
@@ -74,7 +74,7 @@ class GenreController extends AbstractController
 
         return $this->render('genre/create.html.twig', [
             'edit' => true,
-            'registrationForm' => $form->createView(),
+            'form' => $form->createView(),
         ]);
     }
 

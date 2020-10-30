@@ -1,0 +1,58 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}User list{% endblock %}
+
+{% block body %}
+    <div class="d-flex justify-content-between">
+        <h1>
+            Users
+        </h1>
+    </div>
+
+<table class="table" id="user-table" style="empty-cells: hide">
+    <thead>
+    <tr>
+        <th>Id</th>
+        <th>Email</th>
+        <th>First name</th>
+        <th>Last name</th>
+        <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for user in users %}
+    <tr valign="middle">
+        <td>
+            {{ user.id }}
+        </td>
+        <td>
+            {{ user.email }}
+        </td>
+
+        <td>
+            {{ user.firstName }}
+        </td>
+
+        <td>
+            {{ user.lastName }}
+        </td>
+
+        <td>
+            {% if 'ROLE_ADMIN' not in user.roles %}
+            <a href="{{ path('user_delete_restore', {id: user.id}) }}">{% if not user.deleted %}Delete{% else %}Restore{% endif %}</a>
+            {% endif %}
+        </td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
+
+{% block javascripts %}
+<script>
+    $(document).ready(function () {
+        $('#user-table').DataTable( {
+        });
+    });
+</script>
+{% endblock %}

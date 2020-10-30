@@ -101,12 +101,24 @@ class User implements UserInterface
      */
     private $imageUrl;
 
+    /**
+     * @ORM\OneToMany(targetEntity=Team::class, mappedBy="leader")
+     */
+    private $teamsLed;
+
+    /**
+     * @ORM\ManyToMany(targetEntity=Team::class, mappedBy="members")
+     */
+    private $teams;
+
     use SoftDelete;
 
     public function __construct()
     {
         $this->favoriteGenres = new ArrayCollection();
         $this->reviews = new ArrayCollection();
+        $this->teamsLed = new ArrayCollection();
+        $this->teams = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -348,6 +360,70 @@ class User implements UserInterface
     {
         $this->deleted = $deleted;
         return $this;
+    }
+
+    /**
+     * @return Collection|Team[]
+     */
+    public function getTeamsLed(): Collection
+    {
+        return $this->teamsLed;
+    }
+
+    public function addTeamsLed(Team $teamsLed): self
+    {
+        if (!$this->teamsLed->contains($teamsLed)) {
+            $this->teamsLed[] = $teamsLed;
+            $teamsLed->setLeader($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTeamsLed(Team $teamsLed): self
+    {
+        if ($this->teamsLed->contains($teamsLed)) {
+            $this->teamsLed->removeElement($teamsLed);
+            // set the owning side to null (unless already changed)
+            if ($teamsLed->getLeader() === $this) {
+                $teamsLed->setLeader(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Team[]
+     */
+    public function getTeams(): Collection
+    {
+        return $this->teams;
+    }
+
+    public function addTeam(Team $team): self
+    {
+        if (!$this->teams->contains($team)) {
+            $this->teams[] = $team;
+            $team->addMember($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTeam(Team $team): self
+    {
+        if ($this->teams->contains($team)) {
+            $this->teams->removeElement($team);
+            $team->removeMember($this);
+        }
+
+        return $this;
+    }
+
+    public function __toString()
+    {
+        return $this->getFirstName() . ' ' .  $this->getLastName();
     }
 
 }

@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Entity\Team;
 use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -64,4 +65,19 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         ;
     }
     */
+
+    public function getActiveQueryBuilder()
+    {
+        return $this->createQueryBuilder('u')
+            ->where('u.deleted = :deleted')
+            ->setParameter('deleted', 0)
+            ;
+    }
+
+    public function getActive()
+    {
+        $builder = $this->getActiveQueryBuilder();
+        return $builder->getQuery()->getResult();
+    }
+
 }

@@ -25,6 +25,7 @@ security:
                 path: app_logout
                 # where to redirect after logout
                 # target: app_any_route
+            user_checker: App\Security\UserChecker
 
             # activate different ways to authenticate
             # https://symfony.com/doc/current/security.html#firewalls-authentication
@@ -37,5 +38,5 @@ security:
     access_control:
          #- { path: ^/login, roles: IS_AUTHENTICATED_ANONIMOUSLY}
          #- { path: ^/register, roles: IS_AUTHENTICATED_ANONIMOUSLY}
-         - { path: ^/genre, roles: ROLE_ADMIN }
+         #- { path: ^/genre, roles: ROLE_ADMIN }
          #- { path: ^/, roles: ROLE_USER }

@@ -54,7 +54,7 @@ class GameFormType extends AbstractType
                     return $genre->getName();
                 },
                 'query_builder' => function(GenreRepository $genreRepository){
-                    $genreRepository->getActive();
+                    return $genreRepository->getActive();
                 }
             ))
             ->add('image', FileType::class, [

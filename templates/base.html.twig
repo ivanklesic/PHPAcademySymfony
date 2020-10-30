@@ -7,7 +7,6 @@
           integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
     <link rel="stylesheet" href="{{ asset('css/all.css') }}" />
     <link rel="stylesheet" href="{{ asset('css/main.css') }}" />
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/css/select2.min.css" rel="stylesheet" />
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs4/jszip-2.5.0/dt-1.10.18/b-1.5.4/b-html5-1.5.4/datatables.min.css"/>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css" integrity="sha512-mSYUmp1HYZDFaVKK//63EcZq4iFWFjxSL+Z3T/aCt4IO9Cejm03q3NKKYN6pFQzY0SBOr8h+eCIAZHPXcpZaNw==" crossorigin="anonymous" />
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" crossorigin="anonymous" />
@@ -19,6 +18,7 @@
             src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"
             integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU="
             crossorigin="anonymous"></script>
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/css/select2.min.css" rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"
             integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN"
             crossorigin="anonymous"></script>
@@ -29,6 +29,7 @@
     <script type="text/javascript" src="https://cdn.datatables.net/v/bs4/jszip-2.5.0/dt-1.10.18/b-1.5.4/b-html5-1.5.4/datatables.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js" integrity="sha512-T/tUfKSV1bihCnd+MxKD0Hm1uBBroVYBOYSk1knyvQ9VyZJpc/ALb4P0r6ubwVPSGB2GvjeoMAJJImBG12TiaQ==" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bs-custom-file-input/dist/bs-custom-file-input.min.js"></script>
+
     <title>{% block title %}Social network{% endblock %}</title>
     {% block stylesheets %}{% endblock %}
 </head>
@@ -44,6 +45,9 @@
                 <li class="nav-item float-left">
                     <a class="nav-link" href="{{ path('review_list', {my:1}) }}">My reviews</a>
                 </li>
+                <li class="nav-item float-left">
+                    <a class="nav-link" href="{{ path('team_list', {my:1}) }}">My teams</a>
+                </li>
             {% endif %}
             {% if is_granted('ROLE_ADMIN') %}
                 <li class="nav-item float-left">
@@ -55,8 +59,14 @@
                 <li class="nav-item float-left">
                     <a class="nav-link" href="{{ path('review_list', {my:0}) }}">Reviews</a>
                 </li>
+                <li class="nav-item float-left">
+                    <a class="nav-link" href="{{ path('team_list', {my:0}) }}">Teams</a>
+                </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{{ path('app_register')}}">Add new admin</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ path('user_list')}}">Users</a>
                 </li>
             {% endif %}
         </ul>

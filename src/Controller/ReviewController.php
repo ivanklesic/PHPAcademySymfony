@@ -63,7 +63,7 @@ class ReviewController extends AbstractController
 
         return $this->render('review/create.html.twig', [
             'edit' => false,
-            'registrationForm' => $form->createView(),
+            'form' => $form->createView(),
             'game' => $game
         ]);
     }
@@ -96,7 +96,7 @@ class ReviewController extends AbstractController
 
         return $this->render('review/create.html.twig', [
             'edit' => true,
-            'registrationForm' => $form->createView(),
+            'form' => $form->createView(),
             'game' => $review->getGame()
         ]);
     }
@@ -106,7 +106,7 @@ class ReviewController extends AbstractController
      * @param Review $review
      * @return Response
      */
-    public function deleteRestoreAction(Review $review): Response
+    public function deleteAction(Review $review): Response
     {
         if(!$this->isGranted('delete', $review))
         {
@@ -117,7 +117,7 @@ class ReviewController extends AbstractController
         $entityManager->remove($review);
         $entityManager->flush();
 
-        return $this->redirectToRoute('game_list');
+        return $this->redirectToRoute('home');
     }
 
     /**

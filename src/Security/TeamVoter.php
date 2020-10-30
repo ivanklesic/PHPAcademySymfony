@@ -1,13 +1,13 @@
 <?php
 namespace App\Security;
 
-use App\Entity\Review;
+use App\Entity\Team;
 use App\Entity\User;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Symfony\Component\Security\Core\Security;
 
-class ReviewVoter extends Voter
+class TeamVoter extends Voter
 {
     const EDIT = 'edit';
     const DELETE = 'delete';
@@ -26,7 +26,7 @@ class ReviewVoter extends Voter
             return false;
         }
 
-        if (!$subject instanceof Review) {
+        if (!$subject instanceof Team) {
             return false;
         }
 
@@ -41,31 +41,31 @@ class ReviewVoter extends Voter
             return false;
         }
 
-        /** @var Review $review */
-        $review = $subject;
+        /** @var Team $team */
+        $team = $subject;
 
         switch ($attribute) {
             case self::EDIT:
-                return $this->canEdit($review, $user);
+                return $this->canEdit($team, $user);
             case self::DELETE:
-                return $this->canDelete($review, $user);
+                return $this->canDelete($team, $user);
         }
 
         throw new \LogicException('This code should not be reached!');
     }
 
-    private function canEdit(Review $review, User $user)
+    private function canEdit(Team $team, User $user)
     {
-        if($review->getUser() === $user){
+        if($team->getLeader() === $user){
             return true;
         }
 
         return false;
     }
 
-    private function canDelete(Review $review, User $user)
+    private function canDelete(Team $team, User $user)
     {
-        if($review->getUser() === $user || $this->security->isGranted('ROLE_ADMIN')){
+        if($team->getLeader() === $user || $this->security->isGranted('ROLE_ADMIN')){
             return true;
         }
 

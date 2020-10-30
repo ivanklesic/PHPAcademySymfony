@@ -114,7 +114,7 @@ class UserController extends AbstractController
 
             $imageFile = $form['image']->getData();
             if ($imageFile) {
-                if($user->getImageUrl())
+                if($user->getImageUrl() && file_exists('images/user/' . $user->getImageUrl()))
                 {
                     unlink('images/user/' . $user->getImageUrl());
                 }
@@ -165,10 +165,10 @@ class UserController extends AbstractController
             return $this->redirectToRoute('home');
         }
         $entityManager = $this->getDoctrine()->getManager();
-        $games = $entityManager->getRepository('App:Game')->findAll();
+        $users = $entityManager->getRepository('App:User')->findAll();
 
-        return $this->render('game/list.html.twig', [
-            'games' => $games,
+        return $this->render('user/list.html.twig', [
+            'users' => $users,
         ]);
     }
 

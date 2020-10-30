@@ -53,7 +53,7 @@ class GameController extends AbstractController
 
         return $this->render('game/create.html.twig', [
             'edit' => false,
-            'registrationForm' => $form->createView(),
+            'form' => $form->createView(),
         ]);
     }
 
@@ -78,7 +78,7 @@ class GameController extends AbstractController
 
             $imageFile = $form['image']->getData();
             if ($imageFile) {
-                if($game->getImageUrl())
+                if($game->getImageUrl() && file_exists('images/game/' . $game->getImageUrl()))
                 {
                     unlink('images/game/' . $game->getImageUrl());
                 }
@@ -95,7 +95,7 @@ class GameController extends AbstractController
 
         return $this->render('game/create.html.twig', [
             'edit' => true,
-            'registrationForm' => $form->createView(),
+            'form' => $form->createView(),
         ]);
     }
 

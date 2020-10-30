@@ -1,0 +1,56 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Team list{% endblock %}
+
+{% block body %}
+<div class="d-flex justify-content-between">
+    <h1>
+        {% if my %}My {% else %}All {% endif %}teams
+    </h1>
+</div>
+
+<table class="table" id="team-table" style="empty-cells: hide">
+    <thead>
+    <tr>
+        <th>Id</th>
+        <th>Name</th>
+        <th>Leader</th>
+        <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for team in teams %}
+    <tr valign="middle">
+        <td>
+            {{ team.id }}
+        </td>
+        <td>
+            {{ team.name }}
+        </td>
+        <td>
+            {{ team.leader }}
+        </td>
+        <td>
+            {% if is_granted('edit', team) %}
+                <a href="{{ path('team_edit', {id: team.id}) }}">Edit</a> |
+            {% endif %}
+            {% if is_granted('delete', team) %}
+                <a href="{{ path('team_delete', {id: team.id}) }}">Delete</a>
+            {% endif %}
+            {% if is_granted('members', team) %}
+                <a href="{{ path('team_members', {id: team.id}) }}">List members</a>
+            {% endif %}
+        </td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
+{% block javascripts %}
+<script>
+    $(document).ready(function () {
+        $('#team-table').DataTable( {
+        });
+    });
+</script>
+{% endblock %}
