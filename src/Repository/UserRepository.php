@@ -2,13 +2,13 @@
 
 namespace App\Repository;
 
-use App\Entity\Team;
 use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\User\PasswordUpgraderInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Security\Core\Security;
 
 /**
  * @method User|null find($id, $lockMode = null, $lockVersion = null)
@@ -18,9 +18,12 @@ use Symfony\Component\Security\Core\User\UserInterface;
  */
 class UserRepository extends ServiceEntityRepository implements PasswordUpgraderInterface
 {
-    public function __construct(ManagerRegistry $registry)
+    private $security;
+
+    public function __construct(ManagerRegistry $registry, Security $security)
     {
         parent::__construct($registry, User::class);
+        $this->security = $security;
     }
 
     /**
@@ -78,6 +81,13 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
     {
         $builder = $this->getActiveQueryBuilder();
         return $builder->getQuery()->getResult();
+    }
+
+    public function getActiveExcludeSelfQueryBuilder()
+    {
+        return $this->getActiveQueryBuilder()
+            ->andWhere('u != :self')
+            ->setParameter('self', $this->security->getUser());
     }
 
 }

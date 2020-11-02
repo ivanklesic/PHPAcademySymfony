@@ -88,7 +88,7 @@ class RegistrationFormType extends AbstractType
                     return $genre->getName();
                 },
                 'query_builder' => function(GenreRepository $genreRepository){
-                    return $genreRepository->getActive();
+                    return $genreRepository->getActiveQueryBuilder();
                 }
             ))
             ->add('cpuFreq', NumberType::class, array(

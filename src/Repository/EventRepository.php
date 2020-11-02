@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Event;
+use App\Entity\Team;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -47,4 +48,16 @@ class EventRepository extends ServiceEntityRepository
         ;
     }
     */
+
+    public function getActiveAndPendingEventsOfTeam(Team $team)
+    {
+        return $this->createQueryBuilder('e')
+            ->where('e.team = :team')
+            ->andWhere('e.endTime > :now')
+            ->setParameter('team', $team)
+            ->setParameter('now', new \DateTime('now'))
+            ->getQuery()
+            ->getResult()
+            ;
+    }
 }

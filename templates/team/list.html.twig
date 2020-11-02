@@ -7,6 +7,9 @@
     <h1>
         {% if my %}My {% else %}All {% endif %}teams
     </h1>
+    <span>
+        <a class="btn btn-success float-right" style="margin:10px 0 10px 10px;" href="{{ path('team_create') }}">Create team</a>
+    </span>
 </div>
 
 <table class="table" id="team-table" style="empty-cells: hide">
@@ -35,10 +38,10 @@
                 <a href="{{ path('team_edit', {id: team.id}) }}">Edit</a> |
             {% endif %}
             {% if is_granted('delete', team) %}
-                <a href="{{ path('team_delete', {id: team.id}) }}">Delete</a>
+                <a href="{{ path('team_delete', {id: team.id}) }}">Delete</a> |
             {% endif %}
-            {% if is_granted('members', team) %}
-                <a href="{{ path('team_members', {id: team.id}) }}">List members</a>
+            {% if is_granted('details', team) %}
+                <a href="{{ path('team_details', {id: team.id}) }}">Details</a>
             {% endif %}
         </td>
     </tr>

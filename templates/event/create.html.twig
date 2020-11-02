@@ -1,18 +1,19 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}{% if not edit %}Create new team {% else %} Edit team {% endif %}{% endblock %}
+{% block title %}{% if not edit %}Create new event {% else %} Edit event {% endif %}{% endblock %}
 
 {% block body %}
 
     <div class="row justify-content-center">
-        <h3 class="h3 mb-3 font-weight-normal">{% if not edit %}Create new team {% else %} Edit team {% endif %}</h3>
+        <h3 class="h3 mb-3 font-weight-normal">{% if not edit %}Create new event {% else %} Edit event {% endif %}</h3>
     </div>
 
     <div class="row justify-content-center">
         <div class="col-6">
             {{ form_start(form) }}
             {{ form_row(form.name) }}
-            {{ form_row(form.members) }}
+            {{ form_row(form.startTime) }}
+            {{ form_row(form.endTime) }}
             <button type="submit" class="btn btn-block btn-primary">Submit</button>
         </div>
     </div>
@@ -22,8 +23,9 @@
 {% block javascripts %}
     <script>
         $(document).ready(function() {
-            $('#team_form_members').select2({
-                placeholder: "Select members"
+            $('.js-datepicker').flatpickr({
+                enableTime: true,
+                dateFormat: "Y-m-d H:i",
             });
         });
     </script>

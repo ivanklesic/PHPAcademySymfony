@@ -27,10 +27,10 @@ class TeamFormType extends AbstractType
                 'expanded' => false,
                 'class' => User::class,
                 'choice_label' => function($user){
-                    return $user->getFirstName() . $user->getLastName() . '(' . $user->getEmail() . ')';
+                    return $user->getFirstName() . ' ' . $user->getLastName() . ' (' . $user->getEmail() . ')';
                 },
                 'query_builder' => function(UserRepository $userRepository){
-                    return $userRepository->getActive();
+                    return $userRepository->getActiveExcludeSelfQueryBuilder();
                 }
             ))
         ;
@@ -43,5 +43,4 @@ class TeamFormType extends AbstractType
         ]);
         $resolver->setRequired('edit');
     }
-
 }

@@ -97,11 +97,51 @@ class TeamController extends AbstractController
         $entityManager = $this->getDoctrine()->getManager();
         $teamRepository = $entityManager->getRepository('App:Team');
 
-        $teams = $my ? $teamRepository->findBy(['user' => $this->getUser()]) : $teamRepository->findAll();
+        $teams = $my ? $teamRepository->getTeamsOfUser($this->getUser()) : $teamRepository->findAll();
 
         return $this->render('team/list.html.twig', [
             'teams' => $teams,
             'my' => $my
+        ]);
+    }
+
+    /**
+     * @Route("/delete/{id}", name="delete")
+     * @param Team $team
+     * @return Response
+     */
+    public function deleteAction(Team $team): Response
+    {
+        if(!$this->isGranted('delete', $team))
+        {
+            return $this->redirectToRoute('home');
+        }
+
+        $entityManager = $this->getDoctrine()->getManager();
+        $entityManager->remove($team);
+        $entityManager->flush();
+
+        return $this->redirectToRoute('home');
+    }
+
+    /**
+     * @Route("/details/{id}", name="details")
+     * @param Team $team
+     * @return Response
+     */
+    public function detailsAction(Team $team) : Response
+    {
+        if(!$this->isGranted('details', $team))
+        {
+            return $this->redirectToRoute('home');
+        }
+        $entityManager = $this->getDoctrine()->getManager();
+        $eventRepository = $entityManager->getRepository('App:Event');
+        $events = $eventRepository->getActiveAndPendingEventsOfTeam($team);
+
+        return $this->render('team/details.html.twig', [
+            'team' => $team,
+            'events' => $events
         ]);
     }
 }

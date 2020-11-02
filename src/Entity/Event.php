@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\EventRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=EventRepository::class)
@@ -19,16 +20,23 @@ class Event
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank()
      */
     private $name;
 
     /**
      * @ORM\Column(type="datetime")
+     * @Assert\Type("\DateTimeInterface", message="Start time must have valid date and time")
+     * @Assert\NotNull(message="Start time cannot be empty")
+     * @Assert\GreaterThan("+1 hours", message="Events need to be set at least an hour before they start")
      */
-    private $startTime;
+    public $startTime;
 
     /**
      * @ORM\Column(type="datetime")
+     * @Assert\Type("\DateTimeInterface", message="End time must have valid date and time")
+     * @Assert\NotNull(message="End time cannot be empty")
+     * @Assert\Expression("value > this.startTime", message="End time must be greater than start time")
      */
     private $endTime;
 
@@ -65,7 +73,7 @@ class Event
         return $this->startTime;
     }
 
-    public function setStartTime(\DateTimeInterface $startTime): self
+    public function setStartTime(?\DateTimeInterface $startTime): self
     {
         $this->startTime = $startTime;
 
@@ -77,7 +85,7 @@ class Event
         return $this->endTime;
     }
 
-    public function setEndTime(\DateTimeInterface $endTime): self
+    public function setEndTime(?\DateTimeInterface $endTime): self
     {
         $this->endTime = $endTime;
 

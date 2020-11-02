@@ -40,10 +40,10 @@
         </td>
         <td>
             {% if is_granted('edit', review) %}
-                <a href="{{ path('review_edit', {id: review.id}) }}">Edit</a> |
+                <a href="{{ path('review_edit', {id: review.id}) }}">Edit</a>
             {% endif %}
             {% if is_granted('delete', review) %}
-                <a href="{{ path('review_delete', {id: review.id}) }}">Delete</a>|
+                | <a href="{{ path('review_delete', {id: review.id}) }}">Delete</a>
             {% endif %}
         </td>
     </tr>

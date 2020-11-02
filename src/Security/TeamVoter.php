@@ -11,9 +11,10 @@ class TeamVoter extends Voter
 {
     const EDIT = 'edit';
     const DELETE = 'delete';
+    const DETAILS = 'details';
+    const EVENTS = 'events';
 
     private $security;
-
 
     public function __construct(Security $security)
     {
@@ -22,7 +23,7 @@ class TeamVoter extends Voter
 
     protected function supports($attribute, $subject)
     {
-        if (!in_array($attribute, [self::EDIT, self::DELETE])) {
+        if (!in_array($attribute, [self::EDIT, self::DELETE, self::DETAILS, self::EVENTS])) {
             return false;
         }
 
@@ -49,6 +50,10 @@ class TeamVoter extends Voter
                 return $this->canEdit($team, $user);
             case self::DELETE:
                 return $this->canDelete($team, $user);
+            case self::DETAILS:
+                return $this->canSeeDetails($team, $user);
+            case self::EVENTS:
+                return $this->canManageEvents($team, $user);
         }
 
         throw new \LogicException('This code should not be reached!');
@@ -59,7 +64,6 @@ class TeamVoter extends Voter
         if($team->getLeader() === $user){
             return true;
         }
-
         return false;
     }
 
@@ -68,9 +72,19 @@ class TeamVoter extends Voter
         if($team->getLeader() === $user || $this->security->isGranted('ROLE_ADMIN')){
             return true;
         }
-
         return false;
     }
 
+    private function canSeeDetails(Team $team, User $user)
+    {
+        if($team->getLeader() === $user || $this->security->isGranted('ROLE_ADMIN') || $team->getMembers()->contains($user)){
+            return true;
+        }
+        return false;
+    }
 
+    private function canManageEvents(Team $team, User $user)
+    {
+        return $this->canEdit($team, $user);
+    }
 }
