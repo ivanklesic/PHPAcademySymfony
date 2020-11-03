@@ -5,7 +5,6 @@ namespace App\Controller;
 use App\Entity\Event;
 use App\Entity\Team;
 use App\Form\EventFormType;
-use App\Form\TeamFormType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -70,6 +69,18 @@ class EventController extends AbstractController
         $entityManager->flush();
 
         return $this->redirectToRoute('team_details', ['id' => $event->getTeam()->getId()]);
+    }
+
+
+    /**
+     * @Route("/test", name="test")
+     */
+    public function test()
+    {
+        $eventRepo = $this->getDoctrine()->getManager()->getRepository('App:Event');
+        $eventStart = $eventRepo->find(2)->getStartTime();
+        $now = new \DateTime();
+        dd($now->diff($eventStart));
     }
 
 }

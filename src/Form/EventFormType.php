@@ -20,7 +20,7 @@ class EventFormType extends AbstractType
                 'required' => true
             ))
             ->add('startTime', DateTimeType::class, array(
-                'label' => 'Start time (at least 1 hour from now)',
+                'label' => 'Start time (at least half an hour from now)',
                 'required' => true,
                 'widget' => 'single_text',
                 'html5' => false,

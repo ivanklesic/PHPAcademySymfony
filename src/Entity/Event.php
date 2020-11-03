@@ -28,15 +28,15 @@ class Event
      * @ORM\Column(type="datetime")
      * @Assert\Type("\DateTimeInterface", message="Start time must have valid date and time")
      * @Assert\NotNull(message="Start time cannot be empty")
-     * @Assert\GreaterThan("+1 hours", message="Events need to be set at least an hour before they start")
+     * @Assert\GreaterThan("+30 minutes", message="Events need to be set at least half an hour before they start")
      */
-    public $startTime;
+    private $startTime;
 
     /**
      * @ORM\Column(type="datetime")
      * @Assert\Type("\DateTimeInterface", message="End time must have valid date and time")
      * @Assert\NotNull(message="End time cannot be empty")
-     * @Assert\Expression("value > this.startTime", message="End time must be greater than start time")
+     * @Assert\Expression("value > this.getStartTime()", message="End time must be greater than start time")
      */
     private $endTime;
 

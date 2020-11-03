@@ -54,8 +54,21 @@ class EventRepository extends ServiceEntityRepository
         return $this->createQueryBuilder('e')
             ->where('e.team = :team')
             ->andWhere('e.endTime > :now')
+            ->orderBy('e.startTime')
             ->setParameter('team', $team)
-            ->setParameter('now', new \DateTime('now'))
+            ->setParameter('now', new \DateTime())
+            ->getQuery()
+            ->getResult()
+            ;
+    }
+
+    public function getPendingNotNotifiedEvents()
+    {
+        return $this->createQueryBuilder('e')
+            ->where('e.startTime > :now')
+            ->andWhere('e.mailSent = 0')
+            ->andWhere('DAY(e.startTime) = DAY(:now)')
+            ->setParameter('now', new \DateTime())
             ->getQuery()
             ->getResult()
             ;
