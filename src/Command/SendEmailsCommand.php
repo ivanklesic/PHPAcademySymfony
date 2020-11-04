@@ -43,10 +43,14 @@ class SendEmailsCommand extends Command
             foreach($events as $event)
             {
                 $now = new \DateTime();
-                $minutesToStart = $now->diff($event->getStartTime())->i;
-                $hoursToStart = $now->diff($event->getStartTime())->h;
+                $timeToStart = $now->diff($event->getStartTime());
+                $yearsToStart = $timeToStart->y;
+                $monthsToStart = $timeToStart->m;
+                $daysToStart = $timeToStart->d;
+                $hoursToStart = $timeToStart->h;
+                $minutesToStart = $timeToStart->i;
 
-                if($minutesToStart <= 30 && $minutesToStart > 0 && $hoursToStart == 0)
+                if($minutesToStart <= 30 && $minutesToStart > 0 && $hoursToStart == 0 && $daysToStart == 0 && $monthsToStart == 0 && $yearsToStart == 0)
                 {
                     $memberEmails = [];
                     if(count($event->getTeam()->getMembers()))

@@ -67,7 +67,6 @@ class EventRepository extends ServiceEntityRepository
         return $this->createQueryBuilder('e')
             ->where('e.startTime > :now')
             ->andWhere('e.mailSent = 0')
-            ->andWhere('DAY(e.startTime) = DAY(:now)')
             ->setParameter('now', new \DateTime())
             ->getQuery()
             ->getResult()

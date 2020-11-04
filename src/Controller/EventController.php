@@ -78,7 +78,7 @@ class EventController extends AbstractController
     public function test()
     {
         $eventRepo = $this->getDoctrine()->getManager()->getRepository('App:Event');
-        $eventStart = $eventRepo->find(2)->getStartTime();
+        $eventStart = $eventRepo->find(10)->getStartTime();
         $now = new \DateTime();
         dd($now->diff($eventStart));
     }
