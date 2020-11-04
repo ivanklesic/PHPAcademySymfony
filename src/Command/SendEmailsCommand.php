@@ -66,6 +66,9 @@ class SendEmailsCommand extends Command
                             ->html('<p>Team leader ' . $event->getTeam()->getLeader() . ' is summoning you and the rest of ' . $event->getTeam() . ' to an event that is taking place between ' . $event->getStartTime()->format('d/m/Y H:i') . ' and ' . $event->getEndTime()->format('d/m/Y H:i') . '.</p>');
                         try {
                             $this->mailer->send($email);
+                            $event->setMailSent(1);
+                            $this->entityManager->persist($event);
+                            $this->entityManager->flush();
                         } catch (TransportExceptionInterface $e) {
                             return Command::FAILURE;
                         }
