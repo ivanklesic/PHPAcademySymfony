@@ -60,9 +60,9 @@
                 var input = $(this).val();
                 show($("#spinner"));
                 let genreId = null;
-                if(location.href.replace(/https?:\/\//i, "").split('/')[2] != null)
+                if(location.href.replace(/https?:\/\//i, "").split('/')[3] != null)
                 {
-                    genreId = location.href.replace(/https?:\/\//i, "").split('/')[2];
+                    genreId = location.href.replace(/https?:\/\//i, "").split('/')[3];
                 }
                 $.ajax({
                     type: "GET",
