@@ -21,12 +21,26 @@ class Review
     /**
      * @ORM\Column(type="string", length=255)
      * @Assert\NotBlank()
+     * @Assert\Length(
+     *      min = 2,
+     *      max = 100,
+     *      minMessage = "Title must be at least {{ limit }} characters long",
+     *      maxMessage = "Title cannot be longer than {{ limit }} characters",
+     *      allowEmptyString = false
+     * )
      */
     private $title;
 
     /**
      * @ORM\Column(type="text")
      * @Assert\NotBlank
+     * @Assert\Length(
+     *      min = 2,
+     *      max = 20000,
+     *      minMessage = "Review text must be at least {{ limit }} characters long",
+     *      maxMessage = "Review text cannot be longer than {{ limit }} characters",
+     *      allowEmptyString = false
+     * )
      */
     private $reviewText;
 

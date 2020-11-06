@@ -3,11 +3,12 @@
 {% block title %}Review{% endblock %}
 
 {% block body %}
+    <br>
     <div class="bg-white rounded shadow-sm p-4 mb-4 restaurant-detailed-ratings-and-reviews">
         <h5 class="mb-1">{{ review.title }} --- a review for {{ review.game.name }}</h5>
         <div class="reviews-members pt-4 pb-4">
             <div class="media">
-                <img alt="Generic placeholder image" src="{{ asset('images/user/' ~ review.user.imageUrl) }}" class="mr-3 rounded-pill">
+                <img alt="No profile image" style="height: 100px; width: auto;" src="{{ asset('images/user/' ~ review.user.imageUrl) }}" class="mr-3 rounded-pill">
                 <div class="media-body">
                     <div class="reviews-members-header">
                                     <span class="star-rating float-right">

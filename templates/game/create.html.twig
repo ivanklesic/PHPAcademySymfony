@@ -19,6 +19,9 @@
             {{ form_row(form.ram) }}
             {{ form_row(form.storageSpace) }}
             {{ form_row(form.genres) }}
+            {% if edit and game.imageUrl %}
+                <img style="height: 200px; width: 100%; display: block;" src="{{ asset('images/game/' ~ game.imageUrl) }}" alt="Card image">
+            {% endif %}
             {{ form_row(form.image) }}
             <button type="submit" class="btn btn-block btn-primary">Submit</button>
         </div>

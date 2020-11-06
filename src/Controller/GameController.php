@@ -6,7 +6,11 @@ use App\Entity\Game;
 use App\Entity\User;
 use App\Form\GameFormType;
 use App\Service\FileUploader;
+use JMS\Serializer\SerializationContext;
+use JMS\Serializer\Serializer;
+use JMS\Serializer\SerializerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -96,6 +100,7 @@ class GameController extends AbstractController
         return $this->render('game/create.html.twig', [
             'edit' => true,
             'form' => $form->createView(),
+            'game' => $game
         ]);
     }
 
@@ -152,7 +157,8 @@ class GameController extends AbstractController
         $user = $this->getUser();
         $compareError = null;
 
-        if(!$user || $user->getCpuFreq() === null || $user->getCpuCores() === null || $user->getGpuVram() === null || $user->getRam() === null || $user->getStorageSpace() === null)
+        if(!$user || $user->getCpuFreq() === null || $user->getCpuCores() === null || $user->getGpuVram() === null || $user->getRam() === null ||
+            $user->getStorageSpace() === null)
         {
             $compareError = 'Your PC specs are not complete';
         }
@@ -183,7 +189,53 @@ class GameController extends AbstractController
             'game' => $game,
             'deals' => $deals
         ]);
-
     }
 
+    /**
+     * @Route("/search", name="search")
+     * @param Request $request
+     * @param SerializerInterface $serializer
+     * @return JsonResponse
+     */
+    public function searchAction(Request $request, SerializerInterface $serializer)
+    {
+        if(!$this->isGranted('ROLE_USER'))
+        {
+            return new JsonResponse([], 403);
+        }
+
+        $genre = null;
+        $searchTerm = $request->query->get('search');
+        $genreId = $request->query->get('genreId');
+        $gameRepository = $this->getDoctrine()->getManager()->getRepository('App:Game');
+        $genreRepository = $this->getDoctrine()->getManager()->getRepository('App:Genre');
+
+        if($genreId)
+        {
+            $genre = $genreRepository->find($genreId);
+        }
+
+        if(ctype_space($searchTerm) || $searchTerm === '' || $searchTerm === null)
+        {
+            if($genre)
+            {
+                $games = $gameRepository->getGamesOfGenre($genre);
+            }
+            else{
+                $games = $gameRepository->getActive();
+            }
+        }
+        else
+        {
+            if($genre)
+            {
+                $games = $gameRepository->findAllMatching($searchTerm, $genre);
+            }
+            else{
+                $games = $gameRepository->findAllMatching($searchTerm);
+            }
+        }
+        $serializedGames = $serializer->serialize($games, 'json', SerializationContext::create()->setGroups(array('search')));
+        return new JsonResponse(['games' => $serializedGames], 200);
+    }
 }

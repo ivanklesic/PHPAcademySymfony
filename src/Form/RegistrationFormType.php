@@ -75,7 +75,7 @@ class RegistrationFormType extends AbstractType
                             'image/jpeg',
                         ],
                         'mimeTypesMessage' => 'Please upload a valid .jpeg image',
-                        'maxSizeMessage' => 'Maximum allowed size of the image is {{ limit }} KB'
+                        'maxSizeMessage' => 'Maximum allowed size of the image is 100 KB'
                     ])
                 ],
             ])
@@ -92,19 +92,24 @@ class RegistrationFormType extends AbstractType
                 }
             ))
             ->add('cpuFreq', NumberType::class, array(
-                'required' => false
+                'required' => false,
+                'label' => 'CPU core frequency (GHz)'
             ))
             ->add('cpuCores', IntegerType::class, array(
-                'required' => false
+                'required' => false,
+                'label' => 'Number of CPU cores'
             ))
             ->add('gpuVram', IntegerType::class, array(
-                'required' => false
+                'required' => false,
+                'label' => 'GPU Video RAM (GB)'
             ))
             ->add('ram', IntegerType::class, array(
-                'required' => false
+                'required' => false,
+                'label' => 'RAM (GB)'
             ))
             ->add('storageSpace', IntegerType::class, array(
-                'required' => false
+                'required' => false,
+                'label' => 'Storage space (GB)'
             ))
         ;
     }

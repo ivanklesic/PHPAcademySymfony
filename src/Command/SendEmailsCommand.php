@@ -11,18 +11,21 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Email;
+use Psr\Log\LoggerInterface;
 
 class SendEmailsCommand extends Command
 {
     private $entityManager;
     private $mailer;
+    private $logger;
 
     protected static $defaultName = 'app:send-emails';
 
-    public function __construct(EntityManagerInterface $entityManager, MailerInterface $mailer)
+    public function __construct(EntityManagerInterface $entityManager, MailerInterface $mailer, LoggerInterface $logger)
     {
         $this->entityManager = $entityManager;
         $this->mailer = $mailer;
+        $this->logger = $logger;
         parent::__construct();
     }
 
@@ -70,6 +73,7 @@ class SendEmailsCommand extends Command
                             $this->entityManager->persist($event);
                             $this->entityManager->flush();
                         } catch (TransportExceptionInterface $e) {
+                            $this->logger->error(json_encode($e));
                             return Command::FAILURE;
                         }
                     }

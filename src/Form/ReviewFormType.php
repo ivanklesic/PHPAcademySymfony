@@ -22,7 +22,8 @@ class ReviewFormType extends AbstractType
                 'attr' => ['rows' => 10]
             ))
             ->add('rating', NumberType::class, array(
-                'required' => true
+                'required' => true,
+                'label' => 'Rating (1-10)'
             ))
         ;
     }

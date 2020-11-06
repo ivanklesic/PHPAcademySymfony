@@ -8,7 +8,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
-use App\Traits\SoftDelete;
+use App\Traits\SoftDeleteTrait;
 
 /**
  * @ORM\Entity(repositoryClass=GenreRepository::class)
@@ -16,6 +16,8 @@ use App\Traits\SoftDelete;
  */
 class Genre
 {
+    use SoftDeleteTrait;
+
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -26,6 +28,13 @@ class Genre
     /**
      * @ORM\Column(type="string", length=255)
      * @Assert\NotBlank
+     * @Assert\Length(
+     *      min = 2,
+     *      max = 100,
+     *      minMessage = "Name must be at least {{ limit }} characters long",
+     *      maxMessage = "Name cannot be longer than {{ limit }} characters",
+     *      allowEmptyString = false
+     * )
      */
     private $name;
 
@@ -38,8 +47,6 @@ class Genre
      * @ORM\ManyToMany(targetEntity=Game::class, mappedBy="genres")
      */
     private $games;
-
-    use SoftDelete;
 
     public function __construct()
     {
@@ -116,17 +123,6 @@ class Genre
             $this->games->removeElement($game);
             $game->removeGenre($this);
         }
-        return $this;
-    }
-
-    public function getDeleted() : ?bool
-    {
-        return $this->deleted;
-    }
-
-    public function setDeleted($deleted) : self
-    {
-        $this->deleted = $deleted;
         return $this;
     }
 }

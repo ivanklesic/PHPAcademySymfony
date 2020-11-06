@@ -3,9 +3,16 @@
 {% block title %}Php Academy{% endblock %}
 
 {% block body %}
+
     <div class="container">
+        <br>
         <div class="row">
-            <div class="col-lg-2">
+            <div class="col-lg-3">
+                <form action="#" class="form-inline d-flex justify-content-center md-form form-sm active-cyan active-cyan-2 mt-2">
+                    <i class="fa fa-search" aria-hidden="true"></i>
+                    <input id="search" class="form-control form-control-sm ml-3 w-90" type="text" placeholder="Search games by name"
+                           aria-label="Search games by name">
+                </form>
                 <br>
                 <div class="list-group">
                     {% for genre in genres %}
@@ -13,9 +20,10 @@
                     {% endfor %}
                 </div>
             </div>
-            <div class="col-lg-10">
+            <div class="col-lg-9">
                 <br>
-                <div class="row">
+                <div class="div-spinner"><i id="spinner" class="fa fa-spinner fa-spin spinner"></i></div>
+                <div class="row" id="mainContent">
                     {% for game in games %}
                         {% set avgRating = game.getAverageRating() %}
                     <div class="col-lg-4 col-md-6 mb-4">
@@ -33,7 +41,7 @@
                                 <a href="{{path('game_deals', {id: game.id})}}" class="card-link">Show best deals</a><br>
                             </div>
                             <div class="card-footer text-muted">
-                                {{ game.releaseDate|date('m/d/Y') }}
+                                {{ game.releaseDate|date('d/m/Y') }}
                             </div>
                         </div>
                     </div>
@@ -43,4 +51,85 @@
         </div>
     </div>
 
+{% endblock %}
+
+{% block javascripts %}
+    <script>
+        $(document).ready(function(){
+            $("#search").on('keyup', function(e) {
+                var input = $(this).val();
+                show($("#spinner"));
+                let genreId = null;
+                if(location.href.replace(/https?:\/\//i, "").split('/')[2] != null)
+                {
+                    genreId = location.href.replace(/https?:\/\//i, "").split('/')[2];
+                }
+                $.ajax({
+                    type: "GET",
+                    url: "{{ path('game_search') }}",
+                    dataType: "json",
+                    data: {
+                        search: input,
+                        genreId: genreId
+                    },
+                    success: function(response) {
+                        let decodedResponse = JSON.parse(response.games)
+                        let exists = decodedResponse.every(element => typeof element == 'object');
+                        if(exists)
+                        {
+                            let mainContent = $("#mainContent");
+                            let newHtml = '';
+                            decodedResponse.forEach(game =>
+                            {
+                                let avgRating = 'N/A';
+                                let totalRatings = 0;
+                                let releaseDate = new Date(game.release_date)
+                                if(game.hasOwnProperty('average_rating'))
+                                {
+                                    avgRating = game.average_rating;
+                                }
+                                if(game.hasOwnProperty('total_ratings'))
+                                {
+                                    totalRatings = game.total_ratings;
+                                }
+                                newHtml += '' +
+                                    '<div class="col-lg-4 col-md-6 mb-4">' +
+                                    '<div class="card mb-3">' +
+                                    '<h3 class="card-header">' + game.name +'</h3>' +
+                                    '<img style="height: 200px; width: 100%; display: block;" ' +
+                                    'src="/images/game/'+ game.image_url +'" alt="Card image">' +
+                                    '<div class="card-body"><p class="card-text">Average rating: ' + avgRating +
+                                    '</p><p class="card-text">Total ratings: '+ totalRatings +'</p>' +
+                                    '</div><div class="card-body">' +
+                                    '<a href="/review/create/'+ game.id +'" class="card-link">Review this game</a><br>' +
+                                    '<a href="/review/game/'+ game.id +'" class="card-link">List all reviews</a><br>' +
+                                    '<a href="/game/compare/'+ game.id +'" class="card-link">Compare specs</a><br>' +
+                                    '<a href="/game/deals/'+ game.id +'" class="card-link">Show best deals</a><br>' +
+                                    '</div><div class="card-footer text-muted">' +
+                                     + releaseDate.getDate() + '/' + (releaseDate.getMonth()+1) + '/' + releaseDate.getFullYear() +
+                                    '</div></div></div>';
+                            });
+                            mainContent.html(newHtml);
+                        }
+                    },
+                    error: function(response) {
+                        console.log(response);
+                    },
+                    complete: function(response){
+                        hide($("#spinner"));
+                    }
+                });
+            });
+
+            function show(element)
+            {
+                element.css("display","inline-block");
+            }
+
+            function hide(element)
+            {
+                element.css("display","none");
+            }
+        });
+    </script>
 {% endblock %}

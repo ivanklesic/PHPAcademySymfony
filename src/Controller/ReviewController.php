@@ -139,7 +139,8 @@ class ReviewController extends AbstractController
 
         return $this->render('review/list.html.twig', [
             'reviews' => $reviews,
-            'my' => $my
+            'my' => $my,
+            'game' => false
         ]);
     }
 
@@ -162,6 +163,8 @@ class ReviewController extends AbstractController
 
         return $this->render('review/list.html.twig', [
             'reviews' => $reviews,
+            'my' => false,
+            'game' => $game
         ]);
     }
 

@@ -70,17 +70,4 @@ class EventController extends AbstractController
 
         return $this->redirectToRoute('team_details', ['id' => $event->getTeam()->getId()]);
     }
-
-
-    /**
-     * @Route("/test", name="test")
-     */
-    public function test()
-    {
-        $eventRepo = $this->getDoctrine()->getManager()->getRepository('App:Event');
-        $eventStart = $eventRepo->find(10)->getStartTime();
-        $now = new \DateTime();
-        dd($now->diff($eventStart));
-    }
-
 }

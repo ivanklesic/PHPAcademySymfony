@@ -31,19 +31,24 @@ class GameFormType extends AbstractType
                 'attr' => ['class' => 'js-datepicker']
             ))
             ->add('cpuFreq', NumberType::class, array(
-                'required' => true
+                'required' => true,
+                'label' => 'CPU core frequency (GHz)'
             ))
             ->add('cpuCores', IntegerType::class, array(
-                'required' => true
+                'required' => true,
+                'label' => 'Number of CPU cores'
             ))
             ->add('gpuVram', IntegerType::class, array(
-                'required' => true
+                'required' => true,
+                'label' => 'GPU Video RAM (GB)'
             ))
             ->add('ram', IntegerType::class, array(
-                'required' => true
+                'required' => true,
+                'label' => 'RAM (GB)'
             ))
             ->add('storageSpace', IntegerType::class, array(
-                'required' => true
+                'required' => true,
+                'label' => 'Storage space (GB)'
             ))
             ->add('genres', EntityType::class, array(
                 'required' => true,
@@ -54,7 +59,7 @@ class GameFormType extends AbstractType
                     return $genre->getName();
                 },
                 'query_builder' => function(GenreRepository $genreRepository){
-                    return $genreRepository->getActive();
+                    return $genreRepository->getActiveQueryBuilder();
                 }
             ))
             ->add('image', FileType::class, [

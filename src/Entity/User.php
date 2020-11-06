@@ -3,7 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
-use App\Traits\SoftDelete;
+use App\Traits\SoftDeleteTrait;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -17,6 +17,8 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class User implements UserInterface
 {
+    use SoftDeleteTrait;
+
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -47,12 +49,26 @@ class User implements UserInterface
     /**
      * @ORM\Column(type="string", length=255)
      * @Assert\NotBlank()
+     * @Assert\Length(
+     *      min = 2,
+     *      max = 100,
+     *      minMessage = "Name must be at least {{ limit }} characters long",
+     *      maxMessage = "Name cannot be longer than {{ limit }} characters",
+     *      allowEmptyString = false
+     * )
      */
     private $firstName;
 
     /**
      * @ORM\Column(type="string", length=255)
      * @Assert\NotBlank()
+     * @Assert\Length(
+     *      min = 2,
+     *      max = 100,
+     *      minMessage = "Name must be at least {{ limit }} characters long",
+     *      maxMessage = "Name cannot be longer than {{ limit }} characters",
+     *      allowEmptyString = false
+     * )
      */
     private $lastName;
 
@@ -110,8 +126,6 @@ class User implements UserInterface
      * @ORM\ManyToMany(targetEntity=Team::class, mappedBy="members")
      */
     private $teams;
-
-    use SoftDelete;
 
     public function __construct()
     {
@@ -348,17 +362,6 @@ class User implements UserInterface
     {
         $this->imageUrl = $imageUrl;
 
-        return $this;
-    }
-
-    public function getDeleted() : ?bool
-    {
-        return $this->deleted;
-    }
-
-    public function setDeleted($deleted) : self
-    {
-        $this->deleted = $deleted;
         return $this;
     }
 

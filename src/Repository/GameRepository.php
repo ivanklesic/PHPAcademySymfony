@@ -19,35 +19,6 @@ class GameRepository extends ServiceEntityRepository
         parent::__construct($registry, Game::class);
     }
 
-    // /**
-    //  * @return Game[] Returns an array of Game objects
-    //  */
-    /*
-    public function findByExampleField($value)
-    {
-        return $this->createQueryBuilder('g')
-            ->andWhere('g.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('g.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
-    }
-    */
-
-    /*
-    public function findOneBySomeField($value): ?Game
-    {
-        return $this->createQueryBuilder('g')
-            ->andWhere('g.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
-    }
-    */
-
     public function getActiveQueryBuilder()
     {
         return $this->createQueryBuilder('g')
@@ -75,6 +46,23 @@ class GameRepository extends ServiceEntityRepository
     {
         $builder = $this->getGamesOfGenreQueryBuilder($genre);
         return $builder->getQuery()->getResult();
+    }
+
+    public function findAllMatching($query, $genre = null)
+    {
+        if($genre)
+        {
+            $builder = $this->getGamesOfGenreQueryBuilder($genre);
+        }
+        else{
+            $builder = $this->getActiveQueryBuilder();
+        }
+        return $builder
+            ->andWhere('g.name LIKE :query')
+            ->setParameter('query', '%'.$query.'%')
+            ->getQuery()
+            ->getResult()
+            ;
     }
 
 

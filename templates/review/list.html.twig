@@ -5,7 +5,7 @@
 {% block body %}
 <div class="d-flex justify-content-between">
     <h1>
-        {% if my %}My {% else %}All {% endif %}reviews
+        {% if my %}My {% elseif game %} {{ game.name }} {% else %}All {% endif %}reviews
     </h1>
 </div>
 

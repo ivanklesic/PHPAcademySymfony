@@ -3,11 +3,15 @@
 namespace App\Entity;
 
 use App\Repository\GameRepository;
-use App\Traits\SoftDelete;
+use App\Traits\SoftDeleteTrait;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use JMS\Serializer\Annotation\Type;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use JMS\Serializer\Annotation\Groups;
+use JMS\Serializer\Annotation\VirtualProperty;
+use JMS\Serializer\Annotation\SerializedName;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -16,22 +20,34 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class Game
 {
+    use SoftDeleteTrait;
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
+     * @Groups({"search"})
+     *
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
      * @Assert\NotBlank()
+     * @Assert\Length(
+     *      min = 2,
+     *      max = 100,
+     *      minMessage = "Name must be at least {{ limit }} characters long",
+     *      maxMessage = "Name cannot be longer than {{ limit }} characters",
+     *      allowEmptyString = false
+     * )
+     * @Groups({"search"})
      */
     private $name;
 
     /**
      * @ORM\Column(type="date")
      * @Assert\Type("\DateTimeInterface")
+     * @Groups({"search"})
      */
     private $releaseDate;
 
@@ -77,10 +93,9 @@ class Game
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"search"})
      */
     private $imageUrl;
-
-    use SoftDelete;
 
     public function __construct()
     {
@@ -234,17 +249,6 @@ class Game
         return $this;
     }
 
-    public function getDeleted() : ?bool
-    {
-        return $this->deleted;
-    }
-
-    public function setDeleted($deleted) : self
-    {
-        $this->deleted = $deleted;
-        return $this;
-    }
-
     public function getImageUrl(): ?string
     {
         return $this->imageUrl;
@@ -257,6 +261,13 @@ class Game
         return $this;
     }
 
+    /**
+     * @VirtualProperty()
+     * @Type("float")
+     * @SerializedName("average_rating")
+     * @Groups({"search"})
+     * @return float|null
+     */
     public function getAverageRating() : ?float
     {
         $reviews = $this->getReviews();
@@ -272,5 +283,25 @@ class Game
         }
 
         return $sum/count($reviews);
+    }
+
+    /**
+     * @VirtualProperty()
+     * @Type("int")
+     * @SerializedName("total_ratings")
+     * @Groups({"search"})
+     * @return int|null
+     */
+
+    public function getTotalRatings() : ?int
+    {
+        $reviews = $this->getReviews();
+
+        if($reviews->isEmpty())
+        {
+            return null;
+        }
+
+        return count($reviews);
     }
 }

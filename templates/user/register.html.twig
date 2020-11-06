@@ -24,6 +24,9 @@
         }) }}
             {% endif %}
             <h5 class="h5 mb-3 font-weight-normal">Optional</h5>
+            {% if edit and user.imageUrl %}
+                <img style="height: 200px; width: 100%; display: block;" src="{{ asset('images/user/' ~ user.imageUrl) }}" alt="Card image">
+            {% endif %}
             {{ form_row(registrationForm.image) }}
             {{ form_row(registrationForm.favoriteGenres) }}
             {{ form_row(registrationForm.cpuFreq) }}
